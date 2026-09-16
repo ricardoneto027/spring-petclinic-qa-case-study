@@ -1,6 +1,6 @@
 # Test Plan & Test Design — Spring PetClinic REST
 ### Projeto de Portfólio QA — PAC (Semana 2)
-**Autor:** Ricardo Neto | **Produto sob teste:** Spring PetClinic REST | **Data:** Setembro 2026
+**Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST e Spring PetClinic Angular| **Data:** Setembro 2026
 
 ---
 
@@ -92,6 +92,7 @@
 3. Validar unicidade de campos que deveriam ser únicos (username, etc.)
 4. Validar constraints da BD (NOT NULL, tamanho de campos) vs regras da API
 5. Validar consistência entre resposta da API e dados persistidos na BD após cada operação CRUD
+6. Validar que os dados inseridos via UI persistem corretamente após reinício do ambiente Docker (não há perda de estado) — ✅ confirmado: pet "parrot" adicionado permaneceu após reinício via Docker
 
 ### I. Transversal — Validações de API
 
@@ -101,6 +102,24 @@
 4. Testar métodos HTTP não suportados num endpoint [negativo]
 5. Testar payloads JSON malformados [negativo — robustez]
 
+### J. Interface & Experiência do Utilizador (UI/UX)
+
+1. Botão "Add Owner" no formulário de novo owner aparece visualmente desativado (cinzento) com campos vazios — validar se fica ativo ao preencher todos os campos obrigatórios, e que feedback visual existe ao tentar submeter incompleto [EG/UX]
+2. Mesmo padrão a validar no formulário "Add Vet" (botão "Save Vet", também cinzento por defeito) [EG/UX]
+3. Nenhum campo dos formulários "New Owner" ou "New Veterinarian" mostra asterisco ou indicação visual de obrigatoriedade — validar se é intencional ou lacuna de usabilidade [UX — ambiguidade]
+4. Validar se existe validação do lado do cliente (antes do submit) ou se toda a validação só ocorre após round-trip ao servidor [UX/funcional]
+5. Inconsistência de padrão identificada: "Owners" e "Veterinarians" abrem a adição numa página separada; "Pet Types" e "Specialties" mostram um formulário inline expandido na mesma página. Validar se é intencional — documentar como observação de consistência, não necessariamente bug [UX — consistência]
+6. Ambiguidade importante: o dropdown "Specialty" no formulário "Add Vet" só permite selecionar UMA especialidade, mas a lista mostra vets com múltiplas especialidades associadas (ex: Linda Douglas — dentistry + surgery). Validar como/se é possível associar mais do que uma especialidade a um vet através da UI, ou se isso só é possível via API/seed de dados [RB — ambiguidade]
+7. Validar comportamento da pesquisa de Owners por "Last name": aceita pesquisa parcial? É case-sensitive? Qual o resultado ao clicar "Find Owner" com o campo vazio? [EP/funcional]
+8. Validar se a listagem de Owners suporta paginação quando o número de registos crescer significativamente, ou se carrega tudo de uma vez [UX — escalabilidade]
+9. Validar se o botão "Back" nos formulários de adição descarta dados já preenchidos sem qualquer aviso ao utilizador [UX — perda de dados]
+10. Validar consistência de nomenclatura nos menus dropdown: "Owners" usa "Search", "Veterinarians" usa "All", para uma ação equivalente (listar/consultar registos) [UX — consistência de nomenclatura]
+11. "Pet Types" e "Specialties" não têm menu dropdown na navbar (acesso direto), ao contrário de "Owners" e "Veterinarians" — validar se é intencional [UX — consistência de navegação]
+12. Validar legibilidade/contraste dos botões desativados (cinzento sobre fundo cinzento claro) — possível questão de acessibilidade [Acessibilidade]
+13. Validar responsividade do layout em ecrãs mais pequenos (tablet/mobile) — os prints disponíveis mostram apenas desktop [UX — a validar]
+14. Validar se erros devolvidos pela API (ex: telefone inválido, campos em falta) são apresentados de forma clara na UI, ou apenas na consola do browser (como observámos anteriormente no erro de ligação) [UX/funcional]
+15. Confirmar que a tabela de Veterinarians lida corretamente com vets sem especialidade associada (célula vazia, já visível nos prints com James Carter e Sharon Jenkins) mesmo após edição/remoção de especialidade [funcional/regressão]
+
 ---
 
-**Total de condições de teste identificadas:** ~70, distribuídas pelos 7 módulos funcionais + 2 transversais. Servem de base para a conversão em test cases detalhados na Semana 3, priorizados segundo o risco definido na Semana 1.
+**Total de condições de teste identificadas:** ~85, distribuídas pelos 7 módulos funcionais + 2 transversais. Servem de base para a conversão em test cases detalhados na Semana 3, priorizados segundo o risco definido na Semana 1.
