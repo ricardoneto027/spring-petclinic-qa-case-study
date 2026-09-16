@@ -28,6 +28,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Automação de UI dos fluxos críticos (Selenium + Python + Page Object Model)
 - Integração contínua (GitHub Actions) e ambiente containerizado (Docker)
 - Testes exploratórios sobre os fluxos críticos e de maior risco
+- Testes funcionais e de UI/UX (manuais) executados através da interface Angular (localhost:4200), cobrindo navegação, formulários e consistência visual, complementados por testes de API e validação direta na base de dados para as mesmas regras de negócio.
 
 **Fora do escopo (nesta fase):**
 - Testes de performance/carga (JMeter) — o projeto já disponibiliza um plano JMeter oficial, mas fica documentado como extensão futura, após aprendizagem dedicada de JMeter/BlazeMeter (prioridade de 2026)
@@ -46,6 +47,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 | Specialties | Gestão de especialidades associadas a veterinários |
 | Visits | Agendamento e histórico de consultas |
 | Users & Auth | Criação de utilizadores, autenticação e controlo de acesso por role |
+| UI/UX | Navegação, formulários, feedback visual, consistência de padrões de interface entre módulos |
 
 ### 5. Abordagem e Estratégia de Testes
 
@@ -56,13 +58,14 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Testes de integridade de dados (SQL sobre PostgreSQL)
 - Testes de automação de UI (Selenium + Python, padrão Page Object Model)
 - Testes de controlo de acesso (autenticação/autorização por role)
-
+- Testes manuais de UI/UX, focados em navegação, formulários, feedback visual e consistência de padrões de interface
 **Técnicas de design de teste utilizadas** (alinhadas com ISTQB Foundation Level):
 - Particionamento de equivalência (Equivalence Partitioning)
 - Análise de valores de fronteira (Boundary Value Analysis)
 - Tabelas de decisão (para regras de negócio com múltiplas condições, ex: permissões por role)
 - Testes baseados em erro (Error Guessing) — sobretudo nas ambiguidades já identificadas
 - Testes baseados em risco (Risk-Based Testing) — priorização dos fluxos críticos definidos na Semana 1
+- Revisão de consistência de UX (comparação de padrões entre módulos da interface) — aplicada com base no meu background de design gráfico
 
 **Priorização:** os testes seguem a priorização de risco definida na Semana 1 — maior atenção a: registo owner→pet, agendamento de visitas, autenticação/autorização de API, e pesquisa.
 
@@ -84,6 +87,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 ### 8. Ambiente de Teste
 
 - **Aplicação:** Spring PetClinic REST, corrida via Docker (`docker-compose --profile postgres up`)
+- Front-end: Spring PetClinic Angular, servido via Vite dev server em container Node (node:22), acessível em http://localhost:4200. O ambiente completo (backend + PostgreSQL + front-end) corre através de um único docker-compose.yml, com os três serviços na mesma rede Docker.
 - **Base de dados:** PostgreSQL 16 (containerizado)
 - **Documentação da API:** Swagger UI (`/petclinic/swagger-ui.html`) e OpenAPI spec
 - **Ferramentas:** Postman (API), Selenium + Python (UI), pgAdmin ou DBeaver (SQL), Jira (bugs), Confluence (documentação), GitHub + GitHub Actions (versionamento e CI)
