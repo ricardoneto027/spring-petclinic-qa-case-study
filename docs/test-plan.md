@@ -73,16 +73,16 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 - Ambiente local a correr com sucesso via Docker (perfil PostgreSQL)
 - Acesso ao Swagger UI e à documentação OpenAPI do produto
-- Test Plan e Test Design aprovados (este documento)
+- Test Plan e Test Design concluídos e revistos antes do início da execução.
 - Ferramentas configuradas: Postman, Jira, Confluence, GitHub
 
 ### 7. Critérios de Saída
 
 - 100% dos test cases das funcionalidades críticas executados (mesmo que com defeitos documentados)
 - Todos os defeitos encontrados reportados e priorizados no Jira
-- Suite de automação (UI + API) a correr com sucesso no pipeline de CI
+- Suite de automação planeada implementada e executada no pipeline de CI, com todos os testes críticos automatizados executados e resultados documentados.
 - Documentação final publicada no Confluence
-- Nenhum defeito crítico/bloqueante em aberto sem justificação documentada
+- Nenhum defeito crítico/bloqueante em aberto sem avaliação de impacto, evidência e justificação documentada.
 
 ### 8. Ambiente de Teste
 
@@ -96,7 +96,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 - Test Plan (este documento)
 - Test Design (Parte 2 deste documento)
-- Test Cases detalhados (Semana 3)
+- Test Cases detalhados (AIO Tests - Jira)
 - Relatórios de bugs (Jira)
 - Suite de automação (repositório GitHub)
 - Relatórios de execução de CI (GitHub Actions)
@@ -114,8 +114,8 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 | Semana | Foco |
 |---|---|
 | 1 ✅ | Definição do produto, escopo e apresentação inicial |
-| 2 (atual) | Test Plan + Test Design |
-| 3 | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
+| 2 ✅ | Test Plan + Test Design |
+| 3 🔄 | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
 | 4 | Automação de UI — setup Selenium + POM sobre fluxos críticos |
 | 5 | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
 | 6 | Validação de dados (SQL/PostgreSQL) + consolidação da suite de automação |
@@ -135,3 +135,13 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 ### 13. Ferramentas — Resumo
 
 Python, Selenium, Postman, PostgreSQL/SQL, Jira, Confluence, GitHub, GitHub Actions, Docker.
+
+### 14. Test Data Management
+
+| Dados pré-existentes fornecidos pela aplicação serão utilizados como baseline. |
+| Serão criados dados de teste específicos para cenários positivos e negativos. |
+| IDs e entidades relacionadas serão controlados para evitar dependências entre testes. |
+| Serão utilizados dados válidos, inválidos, limites e duplicados conforme a técnica de teste aplicada. |
+| Dados utilizados nos testes de API serão documentados no Postman. |
+| Quando necessário, o estado da base de dados será validado antes/depois da execução através de SQL. |
+| Credenciais e dados sensíveis não serão armazenados diretamente no repositório. |
