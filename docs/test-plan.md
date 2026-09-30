@@ -18,7 +18,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Construir uma suite de testes automatizados (UI + API) integrada num pipeline de CI.
 - Produzir artefactos de QA profissionais (test plan, test cases, bug reports, relatórios) como prova de competência para efeitos de portefólio.
 
-### 3. Escopo
+### 3. Scope
 
 **Dentro do escopo:**
 - Testes funcionais (manuais e automatizados) de: Owners, Pets, PetTypes, Vets, Specialties, Visits, Users
@@ -74,7 +74,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Ambiente local a correr com sucesso via Docker (perfil PostgreSQL)
 - Acesso ao Swagger UI e à documentação OpenAPI do produto
 - Test Plan e Test Design concluídos e revistos antes do início da execução.
-- Ferramentas configuradas: Postman, Jira, Confluence, GitHub
+- Ferramentas configuradas: Postman, Jira, Confluence, GitHub, GitHub Actions, Docker
 
 ### 7. Critérios de Saída
 
@@ -96,7 +96,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 - Test Plan (este documento)
 - Test Design (Parte 2 deste documento)
-- Test Cases detalhados (AIO Tests - Jira)
+- Test Cases detalhados (AIO Tests + Jira)
 - Relatórios de bugs (Jira)
 - Suite de automação (repositório GitHub)
 - Relatórios de execução de CI (GitHub Actions)
@@ -126,7 +126,7 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 
 | Risco | Mitigação |
 |---|---|
-| Tempo limitado (10-15h/semana) para o escopo definido | Priorização por risco: funcionalidades críticas primeiro; scope claramente delimitado |
+| Tempo definido (10-15h/semana) para o escopo definido | Priorização por risco: funcionalidades críticas primeiro; scope claramente delimitado |
 | Inclusão de testes de autorização aumenta o esforço | Integrado nas fases já existentes (manual + API), sem criar fase extra |
 | Ambiguidades de regras de negócio podem consumir tempo de investigação | Documentadas antecipadamente (secção de ambiguidades); tratadas como parte do exploratory testing |
 | Complexidade de setup (Docker, ambiente) | Testado previamente na Semana 1; scripts e comandos já documentados |
