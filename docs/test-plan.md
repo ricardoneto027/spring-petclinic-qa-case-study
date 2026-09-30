@@ -138,10 +138,10 @@ Python, Selenium, Postman, PostgreSQL/SQL, Jira, Confluence, GitHub, GitHub Acti
 
 ### 14. Test Data Management
 
-| Dados pré-existentes fornecidos pela aplicação serão utilizados como baseline. |
-| Serão criados dados de teste específicos para cenários positivos e negativos. |
-| IDs e entidades relacionadas serão controlados para evitar dependências entre testes. |
-| Serão utilizados dados válidos, inválidos, limites e duplicados conforme a técnica de teste aplicada. |
-| Dados utilizados nos testes de API serão documentados no Postman. |
-| Quando necessário, o estado da base de dados será validado antes/depois da execução através de SQL. |
-| Credenciais e dados sensíveis não serão armazenados diretamente no repositório. |
+- Dados pré-existentes fornecidos pela aplicação serão utilizados como baseline.
+- Serão criados dados de teste específicos para cenários positivos e negativos.
+- IDs e entidades relacionadas serão controlados para evitar dependências entre testes.
+- Serão utilizados dados válidos, inválidos, limites e duplicados conforme a técnica de teste aplicada.
+- Dados utilizados nos testes de API serão documentados no Postman.
+- Quando necessário, o estado da base de dados será validado antes/depois da execução através de SQL.
+- Credenciais e dados sensíveis não serão armazenados diretamente no repositório.
