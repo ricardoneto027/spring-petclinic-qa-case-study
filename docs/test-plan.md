@@ -115,9 +115,9 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 |---|---|
 | 1 ✅ | Definição do produto, escopo e apresentação inicial |
 | 2 ✅ | Test Plan + Test Design |
-| 3 🔄 | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
-| 4 | Automação de UI — setup Selenium + POM sobre fluxos críticos |
-| 5 | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
+| 3 ✅ | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
+| 4 🔄 | Automação de UI — setup Selenium + POM sobre fluxos críticos |
+| 5 🔄 | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
 | 6 | Validação de dados (SQL/PostgreSQL) + consolidação da suite de automação |
 | 7 | Containerização (Docker) + pipeline de CI (GitHub Actions) |
 | 8 | Documentação final (Confluence) + relatório final + apresentação final |
