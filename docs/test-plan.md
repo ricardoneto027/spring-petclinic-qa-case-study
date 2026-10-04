@@ -1,6 +1,6 @@
 # Test Plan & Test Design — Spring PetClinic REST
-### Projeto de Portfólio QA — PAC (Semana 2)
-**Autor:** Ricardo Neto | **Produto sob teste:** Spring PetClinic REST | **Data:** Setembro 2026
+### Projeto de Portfólio QA — PAC
+**Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST | **Data:** Setembro 2026
 
 ---
 
@@ -18,7 +18,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Construir uma suite de testes automatizados (UI + API) integrada num pipeline de CI.
 - Produzir artefactos de QA profissionais (test plan, test cases, bug reports, relatórios) como prova de competência para efeitos de portefólio.
 
-### 3. Escopo
+### 3. Scope
 
 **Dentro do escopo:**
 - Testes funcionais (manuais e automatizados) de: Owners, Pets, PetTypes, Vets, Specialties, Visits, Users
@@ -28,6 +28,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Automação de UI dos fluxos críticos (Playwright + Python + Page Object Model)
 - Integração contínua (GitHub Actions) e ambiente containerizado (Docker)
 - Testes exploratórios sobre os fluxos críticos e de maior risco
+- Testes funcionais e de UI/UX (manuais) executados através da interface Angular (localhost:4200), cobrindo navegação, formulários e consistência visual, complementados por testes de API e validação direta na base de dados para as mesmas regras de negócio.
 
 **Fora do escopo (nesta fase):**
 - Testes de performance/carga (JMeter) — o projeto já disponibiliza um plano JMeter oficial, mas fica documentado como extensão futura, após aprendizagem dedicada de JMeter/BlazeMeter (prioridade de 2026)
@@ -46,6 +47,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 | Specialties | Gestão de especialidades associadas a veterinários |
 | Visits | Agendamento e histórico de consultas |
 | Users & Auth | Criação de utilizadores, autenticação e controlo de acesso por role |
+| UI/UX | Navegação, formulários, feedback visual, consistência de padrões de interface entre módulos |
 
 ### 5. Abordagem e Estratégia de Testes
 
@@ -56,13 +58,14 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Testes de integridade de dados (SQL sobre PostgreSQL)
 - Testes de automação de UI (Playwright + Python, padrão Page Object Model)
 - Testes de controlo de acesso (autenticação/autorização por role)
-
+- Testes manuais de UI/UX, focados em navegação, formulários, feedback visual e consistência de padrões de interface
 **Técnicas de design de teste utilizadas** (alinhadas com ISTQB Foundation Level):
 - Particionamento de equivalência (Equivalence Partitioning)
 - Análise de valores de fronteira (Boundary Value Analysis)
 - Tabelas de decisão (para regras de negócio com múltiplas condições, ex: permissões por role)
 - Testes baseados em erro (Error Guessing) — sobretudo nas ambiguidades já identificadas
 - Testes baseados em risco (Risk-Based Testing) — priorização dos fluxos críticos definidos na Semana 1
+- Revisão de consistência de UX (comparação de padrões entre módulos da interface) — aplicada com base no meu background de design gráfico
 
 **Priorização:** os testes seguem a priorização de risco definida na Semana 1 — maior atenção a: registo owner→pet, agendamento de visitas, autenticação/autorização de API, e pesquisa.
 
@@ -70,20 +73,21 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 - Ambiente local a correr com sucesso via Docker (perfil PostgreSQL)
 - Acesso ao Swagger UI e à documentação OpenAPI do produto
-- Test Plan e Test Design aprovados (este documento)
-- Ferramentas configuradas: Postman, Jira, Confluence, GitHub
+- Test Plan e Test Design concluídos e revistos antes do início da execução.
+- Ferramentas configuradas: Postman, Jira, Confluence, GitHub, GitHub Actions, Docker
 
 ### 7. Critérios de Saída
 
 - 100% dos test cases das funcionalidades críticas executados (mesmo que com defeitos documentados)
 - Todos os defeitos encontrados reportados e priorizados no Jira
-- Suite de automação (UI + API) a correr com sucesso no pipeline de CI
+- Suite de automação planeada implementada e executada no pipeline de CI, com todos os testes críticos automatizados executados e resultados documentados.
 - Documentação final publicada no Confluence
-- Nenhum defeito crítico/bloqueante em aberto sem justificação documentada
+- Nenhum defeito crítico/bloqueante em aberto sem avaliação de impacto, evidência e justificação documentada.
 
 ### 8. Ambiente de Teste
 
 - **Aplicação:** Spring PetClinic REST, corrida via Docker (`docker-compose --profile postgres up`)
+- Front-end: Spring PetClinic Angular, servido via Vite dev server em container Node (node:22), acessível em http://localhost:4200. O ambiente completo (backend + PostgreSQL + front-end) corre através de um único docker-compose.yml, com os três serviços na mesma rede Docker.
 - **Base de dados:** PostgreSQL 16 (containerizado)
 - **Documentação da API:** Swagger UI (`/petclinic/swagger-ui.html`) e OpenAPI spec
 - **Ferramentas:** Postman (API), Playwright + Python (UI), pgAdmin ou DBeaver (SQL), Jira (bugs), Confluence (documentação), GitHub + GitHub Actions (versionamento e CI)
@@ -92,7 +96,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 - Test Plan (este documento)
 - Test Design (Parte 2 deste documento)
-- Test Cases detalhados (Semana 3)
+- Test Cases detalhados (AIO Tests + Jira)
 - Relatórios de bugs (Jira)
 - Suite de automação (repositório GitHub)
 - Relatórios de execução de CI (GitHub Actions)
@@ -110,10 +114,10 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 | Semana | Foco |
 |---|---|
 | 1 ✅ | Definição do produto, escopo e apresentação inicial |
-| 2 (atual) | Test Plan + Test Design |
-| 3 | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
-| 4 | Automação de UI — setup Playwright + POM sobre fluxos críticos |
-| 5 | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
+| 2 ✅ | Test Plan + Test Design |
+| 3 ✅ | Test Cases detalhados + testes exploratórios + primeiros bug reports (Jira) |
+| 4 🔄 | Automação de UI — setup Playwright + POM sobre fluxos críticos |
+| 5 🔄 | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
 | 6 | Validação de dados (SQL/PostgreSQL) + consolidação da suite de automação |
 | 7 | Containerização (Docker) + pipeline de CI (GitHub Actions) |
 | 8 | Documentação final (Confluence) + relatório final + apresentação final |
@@ -122,7 +126,7 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 
 | Risco | Mitigação |
 |---|---|
-| Tempo limitado (10-15h/semana) para o escopo definido | Priorização por risco: funcionalidades críticas primeiro; scope claramente delimitado |
+| Tempo definido (10-15h/semana) para o escopo definido | Priorização por risco: funcionalidades críticas primeiro; scope claramente delimitado |
 | Inclusão de testes de autorização aumenta o esforço | Integrado nas fases já existentes (manual + API), sem criar fase extra |
 | Ambiguidades de regras de negócio podem consumir tempo de investigação | Documentadas antecipadamente (secção de ambiguidades); tratadas como parte do exploratory testing |
 | Complexidade de setup (Docker, ambiente) | Testado previamente na Semana 1; scripts e comandos já documentados |
@@ -131,3 +135,13 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 ### 13. Ferramentas — Resumo
 
 Python, Playwright, Postman, PostgreSQL/SQL, Jira, Confluence, GitHub, GitHub Actions, Docker.
+
+### 14. Test Data Management
+
+- Dados pré-existentes fornecidos pela aplicação serão utilizados como baseline.
+- Serão criados dados de teste específicos para cenários positivos e negativos.
+- IDs e entidades relacionadas serão controlados para evitar dependências entre testes.
+- Serão utilizados dados válidos, inválidos, limites e duplicados conforme a técnica de teste aplicada.
+- Dados utilizados nos testes de API serão documentados no Postman.
+- Quando necessário, o estado da base de dados será validado antes/depois da execução através de SQL.
+- Credenciais e dados sensíveis não serão armazenados diretamente no repositório.
