@@ -3889,28 +3889,23 @@
     {
       "listen": "prerequest",
       "script": {
-        "type": "text/javascript",
-        "requests": {},
         "exec": [
           "// Limpeza automática: apaga os dados de teste criados pelos requests anteriores (guardados em 'gc').",
+          "// Um owner só pode ser apagado depois dos seus pets (a BD tem FKs sem cascade), por isso apaga primeiro os pets.",
           "const g=JSON.parse(pm.collectionVariables.get('gc')||'[]');",
           "if(g.length){pm.collectionVariables.set('gc','[]');",
-          "const B=pm.variables.replaceIn('{{baseUrl}}'),A='Basic '+CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(pm.variables.replaceIn('{{adminUser}}:{{adminPassword}}')));",
+          "const B=pm.variables.replaceIn('{{baseUrl}}'),A='Basic '+CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(pm.variables.replaceIn('{{adminUser}}:{{adminPassword}}'))),H={Authorization:A};",
           "const o={'/owners':0,'/vets':1,'/pettypes':2,'/specialties':3};",
           "g.sort((x,y)=>o[x[0]]-o[y[0]]);",
-          "const run=i=>{if(i<g.length)pm.sendRequest({url:B+g[i][0]+'/'+g[i][1],method:'DELETE',header:{Authorization:A}},()=>run(i+1));};run(0);}"
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "packages": {},
-        "requests": {},
-        "exec": [
-          ""
-        ]
+          "const del=(path,cb)=>pm.sendRequest({url:B+path,method:'DELETE',header:H},()=>cb());",
+          "const delOwner=(id,cb)=>pm.sendRequest({url:B+'/owners/'+id,header:H},(e,r)=>{",
+          "  let pets=[];try{pets=r.json().pets||[]}catch(x){}",
+          "  const next=i=>i<pets.length?del('/pets/'+pets[i].id,()=>next(i+1)):del('/owners/'+id,cb);",
+          "  next(0);});",
+          "const run=i=>{if(i<g.length){const p=g[i][0],id=g[i][1];if(p==='/owners')delOwner(id,()=>run(i+1));else del(p+'/'+id,()=>run(i+1));}};",
+          "run(0);}"
+        ],
+        "type": "text/javascript"
       }
     }
   ],
