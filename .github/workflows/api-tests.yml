@@ -1,0 +1,94 @@
+name: API tests (Newman)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    name: API tests (segurança ${{ matrix.security == 'true' && 'ON' || 'OFF' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        security: ['false', 'true']
+    env:
+      API: http://localhost:9966/petclinic/api
+      ENV_NAME: ${{ matrix.security == 'true' && 'sec-on' || 'sec-off' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Levantar BD + backend
+        working-directory: docker
+        env:
+          PETCLINIC_SECURITY_ENABLE: ${{ matrix.security }}
+        run: docker compose up -d postgres backend
+
+      - name: Esperar pela API
+        run: |
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$API/owners" || true)
+            if [ "$code" = "200" ] || [ "$code" = "401" ]; then
+              echo "API pronta (HTTP $code) ao fim de ~$((i*5)) s"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "A API não respondeu a tempo"
+          docker compose -f docker/docker-compose.yml logs backend
+          exit 1
+
+      - name: Confirmar o modo de segurança
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$API/owners")
+          expected=$([ "${{ matrix.security }}" = "true" ] && echo 401 || echo 200)
+          echo "GET /owners sem credenciais: $code (esperado $expected)"
+          [ "$code" = "$expected" ]
+
+      - name: Instalar Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Correr a collection
+        # --suppress-exit-code: a suite tem falhas esperadas (bugs abertos);
+        # o passo seguinte decide se o pipeline falha.
+        # adminPassword: credencial pública de demonstração do PetClinic (admin/admin).
+        run: |
+          mkdir -p ci-results
+          newman run api-tests/postman/PetClinic.postman_collection.json \
+            -e api-tests/postman/environments/PetClinic.postman_environment_${ENV_NAME}.json \
+            --env-var "adminPassword=admin" \
+            --env-var "securityEnabled=${{ matrix.security }}" \
+            -r cli,json,htmlextra \
+            --reporter-json-export ci-results/results-${ENV_NAME}.json \
+            --reporter-htmlextra-export ci-results/report-${ENV_NAME}.html \
+            --suppress-exit-code
+
+      - name: Verificar contra as falhas conhecidas
+        run: python3 ci/check_newman_results.py ci-results/results-${ENV_NAME}.json ci/known-failures-${ENV_NAME}.txt
+
+      - name: Verificações SQL de integridade (módulo H)
+        if: always()
+        run: |
+          docker exec -i petclinic-postgres psql -U petclinic -d petclinic \
+            < sql/H_integrity_checks.sql > ci-results/H_integrity-${ENV_NAME}.txt || true
+
+      - name: Publicar resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-results-${{ env.ENV_NAME }}
+          path: ci-results/
+
+      - name: Logs do backend em caso de falha
+        if: failure()
+        run: docker compose -f docker/docker-compose.yml logs backend
+
+      - name: Parar o ambiente
+        if: always()
+        working-directory: docker
+        run: docker compose down -v

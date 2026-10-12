@@ -1,0 +1,18 @@
+# Falhas conhecidas com a segurança DESLIGADA (bugs abertos no Jira).
+# Um TC por linha. A CI só falha se aparecer uma falha que NÃO está aqui.
+SPRINGQA-TC-8    # SPRINGQA-17 validação devolve 500
+SPRINGQA-TC-9    # SPRINGQA-17
+SPRINGQA-TC-13   # SPRINGQA-21 owner duplicado aceite
+SPRINGQA-TC-17   # SPRINGQA-20 integridade devolve 404
+SPRINGQA-TC-18   # SPRINGQA-5 pesquisa parcial
+SPRINGQA-TC-27   # SPRINGQA-17
+SPRINGQA-TC-28   # SPRINGQA-22 nome de pet só com espaços
+SPRINGQA-TC-30   # SPRINGQA-23 cascata de visitas
+SPRINGQA-TC-34   # SPRINGQA-8 pet type duplicado
+SPRINGQA-TC-36   # SPRINGQA-9 cascata de pets
+SPRINGQA-TC-46   # SPRINGQA-11 especialidade duplicada
+SPRINGQA-TC-47   # SPRINGQA-20
+SPRINGQA-TC-54   # SPRINGQA-25 visitas no mesmo dia
+SPRINGQA-TC-78   # SPRINGQA-24 formato de erro
+SPRINGQA-TC-79   # SPRINGQA-19 método não suportado
+SPRINGQA-TC-80   # SPRINGQA-18 JSON malformado
