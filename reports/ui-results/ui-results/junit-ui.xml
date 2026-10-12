@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="4" tests="8" time="73.483" timestamp="2026-10-12T23:01:22.391891+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_owners.TestCreateOwner" name="test_criar_owner_valido[chromium]" time="2.449" /><testcase classname="tests.test_owners.TestCreateOwner" name="test_criar_owner_telefone_9_digitos_bug_conhecido[chromium]" time="21.442"><skipped type="pytest.xfail" message="Bug conhecido (SPRINGQA-2): o backend rejeita corretamente telefones com 9 dígitos (regra exige exatamente 10), mas a Angular UI não mostra nenhum erro ao utilizador — falha silenciosa. Este teste documenta o bug; remover o xfail quando o bug for corrigido." /></testcase><testcase classname="tests.test_pets.TestAddPet" name="test_adicionar_pet_valido[chromium]" time="31.651"><skipped type="pytest.xfail" message="Bug conhecido (SPRINGQA-6, confirmado no Jira): a página de detalhe do Owner não apresenta nenhum dado — nem os campos do próprio owner (Name/Address/City/Telephone ficam vazios) nem a secção 'Pets and Visits'. O pet É criado com sucesso no backend (confirmável via Swagger, GET /api/owners/{id}), mas não há forma de o confirmar visualmente pela UI enquanto este bug não for corrigido. Remover o xfail quando a página voltar a renderizar os dados." /></testcase><testcase classname="tests.test_pets.TestAddPet" name="test_adicionar_pet_data_nascimento_futura_bug_conhecido[chromium]" time="1.450"><skipped type="pytest.xfail" message="Bug conhecido (mesma família do SPRINGQA-7 — falha silenciosa): o backend rejeita uma Birth Date no futuro (TC-PET-04), mas a Angular UI não mostra nenhum erro. Nota: devido ao SPRINGQA-6, a primeira asserção (pet não aparece no detalhe) não é um sinal fiável por si só, porque a página não mostra pets nenhuns, válidos ou não — a segunda asserção (mensagem de erro visível) é a que realmente documenta este bug. Remover o xfail quando for corrigido." /></testcase><testcase classname="tests.test_specialties.TestAddSpecialty" name="test_criar_specialty_valida[chromium]" time="1.407"><failure message="AssertionError: A specialty 'cardiology139883' deveria aparecer na lista depois de criada.&#10;assert False&#10; +  where False = specialty_appears_in_list('cardiology139883')&#10; +    where specialty_appears_in_list = &lt;pages.specialty_page.SpecialtyPage object at 0x7f4f00469c10&gt;.specialty_appears_in_list">self = &lt;tests.test_specialties.TestAddSpecialty object at 0x7f4f0042e360&gt;
+page = &lt;Page url='http://localhost:4200/petclinic/specialties'&gt;
+
+    def test_criar_specialty_valida(self, page: Page) -&gt; None:
+        """
+        Caminho feliz: criar uma specialty com um nome válido e confirmar
+        que aparece na lista.
+    
+        Fluxo diferente dos outros módulos: não há navegação para uma
+        página separada — o formulário aparece embutido na própria lista
+        ao clicar "Add" (confirmado em specialty-list.component.ts).
+        """
+        unique_name = f"cardiology{str(int(time.time() * 1000))[-6:]}"
+    
+        specialty_page = SpecialtyPage(page)
+        specialty_page.open_specialties_list()
+        specialty_page.open_add_form()
+        specialty_page.fill_and_submit(unique_name)
+    
+&gt;       assert specialty_page.specialty_appears_in_list(unique_name), (
+            f"A specialty '{unique_name}' deveria aparecer na lista "
+            "depois de criada."
+        )
+E       AssertionError: A specialty 'cardiology139883' deveria aparecer na lista depois de criada.
+E       assert False
+E        +  where False = specialty_appears_in_list('cardiology139883')
+E        +    where specialty_appears_in_list = &lt;pages.specialty_page.SpecialtyPage object at 0x7f4f00469c10&gt;.specialty_appears_in_list
+
+tests/test_specialties.py:39: AssertionError</failure></testcase><testcase classname="tests.test_vets.TestAddVet" name="test_criar_vet_com_especialidade[chromium]" time="1.343"><failure message="AssertionError: Pré-condição falhou: a specialty 'dermatology141328' não foi criada, não é possível continuar para o teste de Vets.&#10;assert False&#10; +  where False = specialty_appears_in_list('dermatology141328')&#10; +    where specialty_appears_in_list = &lt;pages.specialty_page.SpecialtyPage object at 0x7f4f0046b9b0&gt;.specialty_appears_in_list">self = &lt;tests.test_vets.TestAddVet object at 0x7f4f0042d8b0&gt;
+page = &lt;Page url='http://localhost:4200/petclinic/specialties'&gt;
+
+    def test_criar_vet_com_especialidade(self, page: Page) -&gt; None:
+        """
+        Caminho feliz: criar um vet válido associado a uma especialidade
+        existente, e confirmar que aparece na lista de veterinários.
+    
+        O teste cria a sua própria Specialty antes de criar o Vet, em vez
+        de assumir que já existem specialties no sistema (dados de seed
+        como "radiology" podem já não existir — por exemplo, se foram
+        apagadas durante testes manuais anteriores). Isto torna o teste
+        independente do estado atual da base de dados.
+        """
+        unique_specialty = f"dermatology{str(int(time.time() * 1000))[-6:]}"
+        specialty_page = SpecialtyPage(page)
+        specialty_page.open_specialties_list()
+        specialty_page.open_add_form()
+        specialty_page.fill_and_submit(unique_specialty)
+&gt;       assert specialty_page.specialty_appears_in_list(unique_specialty), (
+            f"Pré-condição falhou: a specialty '{unique_specialty}' não foi "
+            "criada, não é possível continuar para o teste de Vets."
+        )
+E       AssertionError: Pré-condição falhou: a specialty 'dermatology141328' não foi criada, não é possível continuar para o teste de Vets.
+E       assert False
+E        +  where False = specialty_appears_in_list('dermatology141328')
+E        +    where specialty_appears_in_list = &lt;pages.specialty_page.SpecialtyPage object at 0x7f4f0046b9b0&gt;.specialty_appears_in_list
+
+tests/test_vets.py:34: AssertionError</failure></testcase><testcase classname="tests.test_vets.TestAddVet" name="test_criar_vet_sem_especialidade[chromium]" time="1.533" /><testcase classname="tests.test_visits.TestAddVisit" name="test_adicionar_visita_valida[chromium]" time="11.719"><skipped type="pytest.xfail" message="Bug conhecido (SPRINGQA-6, confirmado no Jira): a página de detalhe do Owner não apresenta nenhum dado — nem os campos do próprio owner, nem a secção 'Pets and Visits'. Isto bloqueia a verificação visual tanto de Pets (ver test_pets.py) como de Visits: nenhum dos dois é possível confirmar pela UI enquanto este bug não for corrigido, mesmo que ambos sejam persistidos corretamente no backend. Remover o xfail quando a página voltar a renderizar os dados." /></testcase></testsuite></testsuites>

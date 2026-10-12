@@ -1,0 +1,191 @@
+Pager usage is off.
+
+=== TC-70 · Chaves estrangeiras: nenhuma referência quebrada ===
+--- 70.1 pets.owner_id aponta para owner inexistente (esperado: 0 linhas)
+ pet_id | owner_id 
+--------+----------
+(0 rows)
+
+--- 70.2 pets.type_id aponta para tipo inexistente (esperado: 0 linhas)
+ pet_id | type_id 
+--------+---------
+(0 rows)
+
+--- 70.3 visits.pet_id aponta para pet inexistente (esperado: 0 linhas)
+ visit_id | pet_id 
+----------+--------
+(0 rows)
+
+--- 70.4 vet_specialties com vet ou especialidade inexistente (esperado: 0 linhas)
+ vet_id | specialty_id 
+--------+--------------
+(0 rows)
+
+--- 70.5 roles.username sem utilizador (esperado: 0 linhas)
+ role_id | username 
+---------+----------
+(0 rows)
+
+--- 70.6 (informativo) FKs declaradas e regra ON DELETE
+    Se nenhuma FK tiver CASCADE, os apagamentos em cascata vistos na API
+    (SPRINGQA-9 e SPRINGQA-23) vêm da aplicação e não da base de dados.
+     tabela      |                fk                 |                       definicao                       | on_delete 
+-----------------+-----------------------------------+-------------------------------------------------------+-----------
+ vet_specialties | vet_specialties_specialty_id_fkey | FOREIGN KEY (specialty_id) REFERENCES specialties(id) | NO ACTION
+ vet_specialties | vet_specialties_vet_id_fkey       | FOREIGN KEY (vet_id) REFERENCES vets(id)              | NO ACTION
+ pets            | pets_owner_id_fkey                | FOREIGN KEY (owner_id) REFERENCES owners(id)          | NO ACTION
+ pets            | pets_type_id_fkey                 | FOREIGN KEY (type_id) REFERENCES types(id)            | NO ACTION
+ visits          | visits_pet_id_fkey                | FOREIGN KEY (pet_id) REFERENCES pets(id)              | NO ACTION
+ roles           | roles_username_fkey               | FOREIGN KEY (username) REFERENCES users(username)     | NO ACTION
+(6 rows)
+
+
+=== TC-71 · Registos órfãos ===
+--- 71.1 pets sem owner (owner_id NULL) (esperado: 0 linhas)
+ pet_id | name 
+--------+------
+(0 rows)
+
+--- 71.2 visits sem pet (pet_id NULL) (esperado: 0 linhas)
+ visit_id | visit_date | description 
+----------+------------+-------------
+(0 rows)
+
+
+=== TC-72 · Unicidade ===
+--- 72.1 usernames duplicados em users (esperado: 0 linhas; a PK já o garante)
+ username | n 
+----------+---
+(0 rows)
+
+--- 72.2 pares (username, role) duplicados em roles (esperado: 0 linhas)
+ username | role | n 
+----------+------+---
+(0 rows)
+
+--- 72.3 (regra de negócio, sem constraint na BD) owners duplicados: mesmo nome e telefone
+    Linhas = a API deixou criar duplicados (SPRINGQA-21, TC-13)
+ first_name | last_name | telephone | n 
+------------+-----------+-----------+---
+(0 rows)
+
+--- 72.4 (regra de negócio) tipos de pet duplicados, ignorando maiúsculas (TC-34)
+ nome | n 
+------+---
+(0 rows)
+
+--- 72.5 (regra de negócio) especialidades duplicadas, ignorando maiúsculas (TC-46)
+ nome | n 
+------+---
+(0 rows)
+
+--- 72.6 (regra de negócio) visitas duplicadas: mesmo pet e mesmo dia (TC-54)
+ pet_id | visit_date | n 
+--------+------------+---
+(0 rows)
+
+
+=== TC-73 · Constraints da BD vs validações da API ===
+--- 73.1 Esquema: tipos, tamanhos e NULL por coluna
+ table_name  | column_name |     data_type     | max_len | is_nullable 
+-------------+-------------+-------------------+---------+-------------
+ owners      | id          | integer           |         | NO
+ owners      | first_name  | text              |         | YES
+ owners      | last_name   | text              |         | YES
+ owners      | address     | text              |         | YES
+ owners      | city        | text              |         | YES
+ owners      | telephone   | text              |         | YES
+ pets        | id          | integer           |         | NO
+ pets        | name        | text              |         | YES
+ pets        | birth_date  | date              |         | YES
+ pets        | type_id     | integer           |         | NO
+ pets        | owner_id    | integer           |         | YES
+ roles       | id          | integer           |         | NO
+ roles       | username    | character varying |      20 | NO
+ roles       | role        | character varying |      20 | NO
+ specialties | id          | integer           |         | NO
+ specialties | name        | text              |         | YES
+ types       | id          | integer           |         | NO
+ types       | name        | text              |         | YES
+ users       | username    | character varying |      20 | NO
+ users       | password    | character varying |      60 | NO
+ users       | enabled     | boolean           |         | NO
+ vets        | id          | integer           |         | NO
+ vets        | first_name  | text              |         | YES
+ vets        | last_name   | text              |         | YES
+ visits      | id          | integer           |         | NO
+ visits      | pet_id      | integer           |         | YES
+ visits      | visit_date  | date              |         | YES
+ visits      | description | text              |         | YES
+(28 rows)
+
+--- 73.2 Colunas de texto sem limite de tamanho (a API impõe limites que a BD não garante)
+ table_name  | column_name 
+-------------+-------------
+ owners      | address
+ owners      | city
+ owners      | first_name
+ owners      | last_name
+ owners      | telephone
+ pets        | name
+ specialties | name
+ types       | name
+ vets        | first_name
+ vets        | last_name
+ visits      | description
+(11 rows)
+
+--- 73.3 Dados já na BD que a API deveria ter rejeitado
+    (a) telefones que não são só dígitos ou têm mais de 20 caracteres
+ id | first_name | last_name | telephone 
+----+------------+-----------+-----------
+(0 rows)
+
+    (b) nomes de pet vazios ou só com espaços (TC-28)
+ id | name | owner_id 
+----+------+----------
+(0 rows)
+
+    (c) pets com data de nascimento no futuro
+ id | name | birth_date 
+----+------+------------
+(0 rows)
+
+--- 73.4 Limite do username na BD (varchar(20)); a API devolveu 404 acima disto (SPRINGQA-20)
+ username_max_len 
+------------------
+               20
+(1 row)
+
+--- 73.5 Passwords guardadas sem hash BCrypt (SPRINGQA-26); um hash BCrypt começa por $2
+     username      | enabled | inicio_password 
+-------------------+---------+-----------------
+ qa_dup_mv5tnbc0   | t       | Pass
+ qa_inv_1791843990 | t       | Pass
+ qa_oa_1791843989  | t       | Pass
+ qa_oa_mv5tnazn    | t       | Pass
+ qa_oa_mv5tnb5m    | t       | Pass
+ qa_pc_1791843990  | t       | 12
+ qa_va_mv5tnb2m    | t       | Pass
+(7 rows)
+
+
+=== Observações adicionais (fora dos TCs) ===
+--- O.1 Índices duplicados (mesma definição, nomes diferentes)
+ tablename | definicao | n | nomes 
+-----------+-----------+---+-------
+(0 rows)
+
+--- O.2 Contagem de registos por tabela (linha de base; seed original ≈ 10 owners, 13 pets, 4 visits)
+   tabela    | n  
+-------------+----
+ owners      | 10
+ pets        | 13
+ visits      |  4
+ vets        |  6
+ types       |  6
+ specialties |  3
+ users       |  8
+ roles       | 10
+(8 rows)
+
