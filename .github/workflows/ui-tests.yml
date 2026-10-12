@@ -1,0 +1,122 @@
+name: UI tests (Playwright)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ui-tests:
+    name: UI tests (Playwright, Chromium headless)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Versão do frontend testada localmente (spring-petclinic-angular)
+      ANGULAR_REF: 1978a75eab0c803595d5cde75acc6a0a9bcff4de
+
+    steps:
+      - name: Checkout (projeto de QA)
+        uses: actions/checkout@v4
+
+      - name: Checkout (frontend Angular)
+        uses: actions/checkout@v4
+        with:
+          repository: spring-petclinic/spring-petclinic-angular
+          ref: ${{ env.ANGULAR_REF }}
+          path: spring-petclinic-angular
+
+      - name: Levantar BD + backend (segurança desligada, a UI não tem login)
+        working-directory: docker
+        run: docker compose up -d postgres backend
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: spring-petclinic-angular/package-lock.json
+
+      - name: Instalar dependências do frontend
+        working-directory: spring-petclinic-angular
+        run: npm ci
+
+      - name: Arrancar o frontend (ng serve, em segundo plano)
+        working-directory: spring-petclinic-angular
+        env:
+          NG_CLI_ANALYTICS: 'false'
+        run: nohup npx ng serve --host 0.0.0.0 --port 4200 > ../ng-serve.log 2>&1 &
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Instalar Playwright + Chromium
+        working-directory: automation
+        run: |
+          pip install -r requirements.txt pytest-html
+          python -m playwright install --with-deps chromium
+
+      - name: Esperar pela API e pelo frontend
+        run: |
+          wait_for() {
+            for i in $(seq 1 60); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$1" || true)
+              if [ "$code" = "200" ]; then echo "$1 pronto ao fim de ~$((i*5)) s"; return 0; fi
+              sleep 5
+            done
+            echo "$1 não respondeu a tempo"; return 1
+          }
+          wait_for http://localhost:9966/petclinic/api/owners || { docker compose -f docker/docker-compose.yml logs backend; exit 1; }
+          wait_for http://localhost:4200/petclinic/ || { cat ng-serve.log; exit 1; }
+
+      - name: Correr a suite UI (pytest + Playwright)
+        working-directory: automation
+        run: |
+          mkdir -p ../ui-results
+          python -m pytest -v -rxXs \
+            --junitxml=../ui-results/junit-ui.xml \
+            --html=../ui-results/report-ui.html --self-contained-html
+
+      - name: Resumo
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          path = "ui-results/junit-ui.xml"
+          if not os.path.exists(path):
+              raise SystemExit("Sem junit-ui.xml")
+          s = ET.parse(path).getroot()
+          s = s if s.tag == "testsuite" else s.find("testsuite")
+          t, f, e, sk = (int(s.get(k, 0)) for k in ("tests", "failures", "errors", "skipped"))
+          lines = ["### Resultado UI (Playwright)", "",
+                   f"- Testes: {t}",
+                   f"- Passaram: {t - f - e - sk}",
+                   f"- Falharam: {f + e}",
+                   f"- xfail / ignorados (bugs conhecidos documentados): {sk}"]
+          out = "\n".join(lines)
+          print(out)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+              fh.write(out + "\n")
+          PY
+
+      - name: Publicar resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-results
+          path: |
+            ui-results/
+            ng-serve.log
+
+      - name: Logs do backend em caso de falha
+        if: failure()
+        run: docker compose -f docker/docker-compose.yml logs backend
+
+      - name: Parar o ambiente
+        if: always()
+        working-directory: docker
+        run: docker compose down -v

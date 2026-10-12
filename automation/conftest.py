@@ -8,6 +8,7 @@ Configuração partilhada do pytest (fixtures) para os testes de automação.
 
 from __future__ import annotations
 
+import os
 from typing import Iterator
 
 import pytest
@@ -17,18 +18,24 @@ from playwright.sync_api import Browser, Page, sync_playwright
 # TODO: VERIFICAR — confirmar que esta é a porta/host correta no teu ambiente.
 BASE_URL = "http://localhost:4200"
 
+# Em CI (o GitHub Actions define CI=true) o browser corre sem interface.
+# Localmente abre o browser em câmara lenta para se ver a execução;
+# para forçar o modo sem interface localmente: HEADLESS=true pytest
+HEADLESS = os.getenv("CI") == "true" or os.getenv("HEADLESS", "").lower() == "true"
+
 
 @pytest.fixture(scope="session")
 def browser() -> Iterator[Browser]:
     """
     Lança o browser Chromium uma vez para toda a sessão de testes.
 
-    `headless=True` corre sem interface visível (mais rápido, ideal para
-    CI). Muda para `headless=False` localmente se quiseres ver o browser
-    a executar os passos.
+    Em CI corre sem interface visível (mais rápido). Localmente abre o
+    browser com slow_mo para se ver a execução (ver HEADLESS acima).
     """
     with sync_playwright() as playwright:
-        browser_instance = playwright.chromium.launch(headless=False, slow_mo=300)
+        browser_instance = playwright.chromium.launch(
+            headless=HEADLESS, slow_mo=0 if HEADLESS else 300
+        )
         yield browser_instance
         browser_instance.close()
 
