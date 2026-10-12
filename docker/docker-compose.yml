@@ -1,0 +1,70 @@
+# Ambiente de teste do Spring PetClinic (BD + API REST + frontend Angular)
+#
+# Uso local (a partir desta pasta):
+#   docker compose up -d                      -> BD + backend + frontend
+#   docker compose up -d postgres backend     -> só BD + API (é o que a CI usa)
+#
+# Segurança da API (HTTP Basic, admin/admin), desligada por defeito:
+#   PETCLINIC_SECURITY_ENABLE=true docker compose up -d --force-recreate backend
+#
+# O frontend precisa do código do spring-petclinic-angular. O caminho vem de
+# ANGULAR_DIR (definir em docker/.env; ver .env.example).
+
+services:
+  postgres:
+    image: postgres:16.3
+    container_name: petclinic-postgres
+    environment:
+      - POSTGRES_USER=petclinic
+      - POSTGRES_PASSWORD=petclinic
+      - POSTGRES_DB=petclinic
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U petclinic -d petclinic"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - petclinic-net
+
+  backend:
+    image: springcommunity/spring-petclinic-rest
+    platform: linux/amd64
+    container_name: petclinic-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres,spring-data-jpa
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/petclinic
+      - SPRING_DATASOURCE_USERNAME=petclinic
+      - SPRING_DATASOURCE_PASSWORD=petclinic
+      - PETCLINIC_SECURITY_ENABLE=${PETCLINIC_SECURITY_ENABLE:-false}
+    ports:
+      - "9966:9966"
+    networks:
+      - petclinic-net
+
+  frontend:
+    image: node:22
+    container_name: petclinic-frontend
+    working_dir: /app
+    volumes:
+      - ${ANGULAR_DIR:-../../spring-petclinic-angular}:/app
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0"
+    depends_on:
+      - backend
+    ports:
+      - "4200:4200"
+    networks:
+      - petclinic-net
+
+volumes:
+  pgdata:
+
+networks:
+  petclinic-net:
+    driver: bridge
