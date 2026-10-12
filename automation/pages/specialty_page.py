@@ -58,16 +58,22 @@ class SpecialtyPage(BasePage):
         Confirma se uma specialty com o nome indicado aparece na lista.
 
         Os nomes são `<input readonly>`, por isso não dá para usar
-        `has_text` (isso só encontra texto no DOM, não valores de input) —
-        percorremos os inputs da lista e comparamos `input_value()`.
+        `has_text` (isso só encontra texto no DOM, não valores de input).
+
+        Espera ativamente (até DEFAULT_TIMEOUT) que algum input da lista tenha
+        o valor procurado. Ler os inputs uma única vez logo após o "Save"
+        criava uma race condition: a lista ainda não tinha sido atualizada
+        com a resposta da API. Localmente o slow_mo escondia o problema; em
+        CI (headless, sem slow_mo) o teste falhava.
         """
-        inputs = self.page.locator(self.LIST_NAME_INPUTS)
         try:
-            inputs.first.wait_for(state="visible", timeout=self.DEFAULT_TIMEOUT)
+            self.page.wait_for_function(
+                """([selector, expected]) =>
+                    Array.from(document.querySelectorAll(selector))
+                        .some((input) => input.value === expected)""",
+                arg=[self.LIST_NAME_INPUTS, name],
+                timeout=self.DEFAULT_TIMEOUT,
+            )
+            return True
         except Exception:
             return False
-        count = inputs.count()
-        for i in range(count):
-            if inputs.nth(i).input_value() == name:
-                return True
-        return False
