@@ -8,3 +8,4 @@ automation/.pytest_cache/
 
 # PyCharm project settings (pessoal, não partilhado)
 automation/.idea/
+docker/.env
