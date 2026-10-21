@@ -1,0 +1,3 @@
+reports/** linguist-generated=true
+api-tests/postman/reports/** linguist-generated=true
+*.html linguist-generated=true
