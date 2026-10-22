@@ -374,6 +374,6 @@ Foi também neste projeto que aprendi Playwright, Docker e GitHub Actions.
 
 **Ricardo Peres** · QA Engineer, vindo do design gráfico
 
-[LinkedIn](https://www.linkedin.com/in/ricardo-peres027) · [GitHub](https://github.com/ricardoneto027) · [Behance](https://www.behance.net/ricardoneto027) · ricardo.neto027@gmail.com
+[LinkedIn](https://www.linkedin.com/in/ricardo-peres027) · [GitHub](https://github.com/ricardoneto027) · [Behance](https://www.behance.net/ricardoneto027)
 
 Projeto desenvolvido no Programa de Aceleração de Carreira (PAC) da TripleTen. A aplicação sob teste é o [Spring PetClinic](https://github.com/spring-petclinic), um projeto open-source da comunidade Spring.
