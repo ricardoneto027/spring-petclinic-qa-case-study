@@ -85,7 +85,7 @@ class TestAddPet:
 
     @pytest.mark.xfail(
         reason=(
-            "Bug conhecido (mesma família do SPRINGQA-7 — falha silenciosa): "
+            "Bug conhecido (SPRINGQA-7 — falha silenciosa): "
             "o backend rejeita uma Birth Date no futuro (TC-PET-04), mas a "
             "Angular UI não mostra nenhum erro. Nota: devido ao SPRINGQA-6, "
             "a primeira asserção (pet não aparece no detalhe) não é um "

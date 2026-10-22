@@ -1,6 +1,6 @@
 """
 Testes automatizados do fluxo "Criar Owner" (TC-OWN-01 e caso relacionado
-com o bug conhecido SPRINGQA-2).
+com o bug conhecido SPRINGQA-3).
 
 Fluxo escolhido como exemplo crítico em substituição de "Login", já que a
 app não tem autenticação ativa. "Criar Owner" é o fluxo mais usado em todo
@@ -43,7 +43,7 @@ class TestCreateOwner:
 
     @pytest.mark.xfail(
         reason=(
-            "Bug conhecido (SPRINGQA-2): o backend rejeita corretamente "
+            "Bug conhecido (SPRINGQA-3; relacionado: SPRINGQA-2): o backend rejeita corretamente "
             "telefones com 9 dígitos (regra exige exatamente 10), mas a "
             "Angular UI não mostra nenhum erro ao utilizador — falha "
             "silenciosa. Este teste documenta o bug; remover o xfail quando "
