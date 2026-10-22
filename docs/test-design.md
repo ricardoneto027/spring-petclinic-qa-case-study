@@ -1,6 +1,6 @@
 # Test Design · Spring PetClinic REST
 ### Projeto de Portfólio QA (PAC) · Parte 2 de 2 (Semana 2)
-**Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST e Spring PetClinic Angular| **Data:** Setembro 2026
+**Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST e Spring PetClinic Angular | **Data:** Setembro 2026
 
 ---
 
@@ -92,7 +92,7 @@
 3. Validar unicidade de campos que deveriam ser únicos (username, etc.)
 4. Validar constraints da BD (NOT NULL, tamanho de campos) vs regras da API
 5. Validar consistência entre resposta da API e dados persistidos na BD após cada operação CRUD
-6. Validar que os dados inseridos via UI persistem corretamente após reinício do ambiente Docker (não há perda de estado) — ✅ confirmado: pet "parrot" adicionado permaneceu após reinício via Docker
+6. Validar que os dados inseridos via UI persistem corretamente após reinício do ambiente Docker (não há perda de estado)
 
 ### I. Transversal — Validações de API
 

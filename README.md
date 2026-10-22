@@ -225,7 +225,7 @@ flowchart LR
     A3 -->|sim| OK["Pipeline verde"]
     A3 -->|falha nova| KO["Pipeline falha:<br/>regressão"]
     A2 --> A4["Verificações SQL<br/>(módulo H)"]
-    U --> U1["Docker: BD + API<br/>+ frontend Angular"] --> U2["Pytest + Playwright"] --> U3["Relatórios JUnit e HTML"]
+    U --> U1["Docker: BD + API"] --> U1b["Frontend Angular<br/>ng serve, commit fixado"] --> U2["Pytest + Playwright"] --> U3["Relatórios JUnit e HTML"]
 ```
 
 **O problema:** a suite tem testes que falham de propósito, porque documentam bugs abertos. Um pipeline que falha sempre deixa de ser lido; um que ignora todas as falhas esconde regressões.

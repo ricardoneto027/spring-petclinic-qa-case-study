@@ -31,7 +31,7 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 - Testes funcionais e de UI/UX (manuais) executados através da interface Angular (localhost:4200), cobrindo navegação, formulários e consistência visual, complementados por testes de API e validação direta na base de dados para as mesmas regras de negócio.
 
 **Fora do escopo (nesta fase):**
-- Testes de performance/carga (JMeter) — o projeto já disponibiliza um plano JMeter oficial, mas fica documentado como extensão futura, após aprendizagem dedicada de JMeter/BlazeMeter (prioridade de 2026)
+- Testes de performance/carga (JMeter) — o projeto já disponibiliza um plano JMeter oficial, mas fica documentado como extensão futura, após aprendizagem dedicada de JMeter/BlazeMeter
 - Testes de penetração/segurança ofensiva aprofundados (apenas controlo de acesso funcional está incluído, não pentesting)
 - Internacionalização/localização
 - Testes de compatibilidade cross-browser além do Chrome (pode ser considerado como extensão futura)
@@ -86,11 +86,11 @@ Este documento define o plano de testes para o Spring PetClinic REST, uma aplica
 
 ### 8. Ambiente de Teste
 
-- **Aplicação:** Spring PetClinic REST, corrida via Docker (`docker-compose --profile postgres up`)
-- Front-end: Spring PetClinic Angular, servido via Vite dev server em container Node (node:22), acessível em http://localhost:4200. O ambiente completo (backend + PostgreSQL + front-end) corre através de um único docker-compose.yml, com os três serviços na mesma rede Docker.
-- **Base de dados:** PostgreSQL 16 (containerizado)
-- **Documentação da API:** Swagger UI (`/petclinic/swagger-ui.html`) e OpenAPI spec
-- **Ferramentas:** Postman (API), Playwright + Python (UI), pgAdmin ou DBeaver (SQL), Jira (bugs), Confluence (documentação), GitHub + GitHub Actions (versionamento e CI)
+- **Aplicação:** Spring PetClinic REST, corrida via Docker (`docker compose up -d`, na pasta `docker/`)
+- Front-end: Spring PetClinic Angular, servido com `ng serve` em container Node (node:22), acessível em http://localhost:4200. O ambiente completo (backend + PostgreSQL + front-end) corre através de um único docker-compose.yml, com os três serviços na mesma rede Docker.
+- **Base de dados:** PostgreSQL 16.3 (containerizado)
+- **Documentação da API:** Swagger UI (`/petclinic/swagger-ui/index.html`) e OpenAPI spec
+- **Ferramentas:** Postman + Newman (API), Playwright + Python + Pytest (UI), psql (SQL), Jira + AIO Tests (casos de teste e bugs), Confluence (documentação), GitHub + GitHub Actions (versionamento e CI)
 
 ### 9. Entregáveis de Teste
 
@@ -119,8 +119,8 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 | 4 ✅   | Automação de UI — setup Playwright + POM sobre fluxos críticos |
 | 5 ✅   | Automação de UI (continuação) + testes de API (Postman), incluindo autorização |
 | 6 ✅   | Validação de dados (SQL/PostgreSQL) + consolidação da suite de automação |
-| 7 🔄   | Containerização (Docker) + pipeline de CI (GitHub Actions) |
-| 8      | Documentação final (Confluence) + relatório final + apresentação final |
+| 7 ✅   | Containerização (Docker) + pipeline de CI (GitHub Actions) |
+| 8 ✅   | Documentação final (Confluence) + relatório final + apresentação final |
 
 ### 12. Riscos e Contingências
 
@@ -134,7 +134,7 @@ Como projeto individual, assumo os três papéis normalmente distribuídos numa 
 
 ### 13. Ferramentas — Resumo
 
-Python, Playwright, Postman, PostgreSQL/SQL, Jira, Confluence, GitHub, GitHub Actions, Docker.
+Python, Playwright, Pytest, Postman, Newman, PostgreSQL/SQL, Jira, AIO Tests, Confluence, GitHub, GitHub Actions, Docker.
 
 ### 14. Test Data Management
 
