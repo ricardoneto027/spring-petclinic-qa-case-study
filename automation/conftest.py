@@ -15,7 +15,6 @@ import pytest
 from playwright.sync_api import Browser, Page, sync_playwright
 
 # URL base da app Angular a correr localmente via Docker/npm.
-# TODO: VERIFICAR — confirmar que esta é a porta/host correta no teu ambiente.
 BASE_URL = "http://localhost:4200"
 
 # Em CI (o GitHub Actions define CI=true) o browser corre sem interface.

@@ -1,5 +1,5 @@
-# Test Plan & Test Design — Spring PetClinic REST
-### Projeto de Portfólio QA — PAC (Semana 2)
+# Test Design · Spring PetClinic REST
+### Projeto de Portfólio QA (PAC) · Parte 2 de 2 (Semana 2)
 **Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST e Spring PetClinic Angular| **Data:** Setembro 2026
 
 ---
@@ -122,4 +122,4 @@
 
 ---
 
-**Total de condições de teste identificadas:** ~85, distribuídas pelos 7 módulos funcionais + 2 transversais. Servem de base para a conversão em test cases detalhados na Semana 3, priorizados segundo o risco definido na Semana 1.
+  **Total de condições de teste identificadas:** 82, distribuídas por 10 módulos: 7 funcionais (A a G), 2 transversais (H e I) e UI/UX (J).

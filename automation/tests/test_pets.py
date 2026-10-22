@@ -118,5 +118,5 @@ class TestAddPet:
         assert not pet_page.pet_appears_in_owner_detail("PetFuturo"), (
             "O pet não deveria ter sido criado com uma data de nascimento no futuro."
         )
-        # TODO: VERIFICAR texto real da mensagem de erro, quando a UI passar a mostrá-la
+        # A UI ainda não mostra esta mensagem (ver o motivo do xfail acima).
         pet_page.assert_visible("text=cannot be in the future")

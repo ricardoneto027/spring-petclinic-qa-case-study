@@ -1,5 +1,5 @@
-# Test Plan & Test Design — Spring PetClinic REST
-### Projeto de Portfólio QA — PAC
+# Test Plan · Spring PetClinic REST
+### Projeto de Portfólio QA (PAC) · Parte 1 de 2
 **Autor:** Ricardo Peres | **Produto sob teste:** Spring PetClinic REST | **Data:** Setembro 2026
 
 ---

@@ -3,8 +3,7 @@ Page Object para o fluxo "Adicionar Pet" (TC-PET-01 e relacionados).
 
 Todos os seletores e o formato de data abaixo foram confirmados a partir
 do código-fonte real do `spring-petclinic-angular` (pet-add.component.html
-e pets.module.ts), não inferidos — por isso não há marcações de
-TODO/VERIFICAR nesta Page, ao contrário da primeira entrega.
+e pets.module.ts), não inferidos.
 
 Detalhe importante confirmado em `pets.module.ts` (MY_DATE_FORMATS):
 o datepicker (Material + Moment) espera o formato "YYYY/MM/DD" (com

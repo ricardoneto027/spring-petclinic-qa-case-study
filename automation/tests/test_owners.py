@@ -78,4 +78,5 @@ class TestCreateOwner:
         assert not owner_page.owner_appears_in_list("Joao TesteDigitos"), (
             "O owner não deveria ter sido criado com um telefone inválido."
         )
-        owner_page.assert_visible("text=must be exactly 10 digits")  # TODO: VERIFICAR texto real do erro, quando existir
+        # A UI ainda não mostra nenhuma mensagem (ver o motivo do xfail acima).
+        owner_page.assert_visible("text=must be exactly 10 digits")
